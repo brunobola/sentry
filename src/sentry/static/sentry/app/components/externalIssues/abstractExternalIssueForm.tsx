@@ -13,7 +13,7 @@ import {FormField} from 'app/views/settings/projectAlerts/issueEditor/ruleNode';
 export type ExternalIssueAction = 'create' | 'link';
 
 type Props = {
-  action: ExternalIssueAction;
+  action?: ExternalIssueAction;
 } & AsyncComponent['props'];
 
 type State = {
@@ -31,8 +31,11 @@ export default class AbstractExternalIssueForm<
   S extends State = State
 > extends AsyncComponent<P, S> {
   shouldRenderBadRequests = true;
+  action: ExternalIssueAction;
+
   constructor(props: P, context: any) {
     super(props, context);
+    this.action = (this.props.action || 'create') as ExternalIssueAction;
   }
 
   getDefaultState(): State {
@@ -48,9 +51,8 @@ export default class AbstractExternalIssueForm<
   getEndPointString = () => '';
 
   refetchConfig = () => {
-    const {action} = this.props;
     const {dynamicFieldValues} = this.state;
-    const query = {action, ...dynamicFieldValues};
+    const query = {action: this.action, ...dynamicFieldValues};
     const endpoint = this.getEndPointString();
 
     this.api.request(endpoint, {
@@ -67,8 +69,7 @@ export default class AbstractExternalIssueForm<
 
   getConfigName = (): string => {
     // Explicitly returning a non-interpolated string for clarity.
-    const {action} = this.props;
-    switch (action) {
+    switch (this.action) {
       case 'create':
         return 'createIssueConfig';
       case 'link':
