@@ -136,7 +136,7 @@ class PluginActions extends React.Component<Props, State> {
           )}
         </React.Fragment>
       ),
-      {onClose: () => this.handleModalClose}
+      {onClose: this.handleModalClose}
     );
   };
 
